@@ -13,6 +13,7 @@ import math
 #  loads: current load
 #  routePlan: car route plan, without reloading at deposit nodes
 #  __reloadPlan: final route plan [private]
+#  numCars: number of all cars
 class Car:
     numCars = 0
 
