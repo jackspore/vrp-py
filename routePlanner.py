@@ -8,7 +8,7 @@ import math
 import random
 
 class RoutePlanner:
-    totalLength = 0.0
+    totalLength = 9999999999
     maxCarLength = 999999.9
     minCarLength = 0.0
     listCar = []
@@ -17,6 +17,7 @@ class RoutePlanner:
     def __init__(self, cars, cities):
         RoutePlanner.listCar = cars
         RoutePlanner.listCity = cities
+        self.bSingleCarJob = False
 
     # randomly distribute cities to all cars
     def __distributeCities(self):
@@ -33,6 +34,7 @@ class RoutePlanner:
         tmp = carPlan[a]
         carPlan[a] = carPlan[b]
         carPlan[b] = tmp
+        print('switch city', a, 'and', b)
         car.setRoutePlan(carPlan)
 
     # mutate between two cars, swap one city from each
@@ -61,10 +63,10 @@ class RoutePlanner:
         for car in RoutePlanner.listCar:
             car.insertPlanWithReload()
             planLength = car.evaluatePlan()
-            print("Car id:%s travels length: %f" % car.id, planLength)
-            print("Route plan:", car.routePlan)
+            print("Car id:", car.id, "travels length:", planLength)
+            #print("Route plan:", car.routePlan)
 
-            __totolLength += planLength
+            __totalLength += planLength
             if(planLength < RoutePlanner.minCarLength):
                 __minCarLength = planLength
             if(planLength > RoutePlanner.maxCarLength):
@@ -72,6 +74,7 @@ class RoutePlanner:
 
         bBetter = __totalLength < RoutePlanner.totalLength
         if (bBetter or updateAnyway):
+            print ('update route plan result')
             RoutePlanner.totalLength = __totalLength
             RoutePlanner.minCarLength = __minCarLength
             RoutePlanner.maxCarLength = __maxCarLength
@@ -79,13 +82,16 @@ class RoutePlanner:
         return bBetter
 
     def __hillClimb(self):
-        dice = random.randint(0, 100)
-        if (dice % 2 == 0):
-            c1 = random.randint(0, len(RoutePlanner.listCar)-1)
-            c2 = random.randint(0, len(RoutePlanner.listCar)-1)
-            self.__mutateBetweenCars(RoutePlanner.listCar[c1], RoutePlanner.listCar[c2])
+        if (self.bSingleCarJob):
+            self.__mutateSingleCar(RoutePlanner.listCar[0])
         else:
-            self.__mutateSingleCar(RoutePlanner.listCar[random.randint(0, len(RoutePlanner.listCar)-1)])
+            dice = random.randint(0, 100)
+            if (dice % 2 == 0):
+                c1 = random.randint(0, len(RoutePlanner.listCar)-1)
+                c2 = random.randint(0, len(RoutePlanner.listCar)-1)
+                self.__mutateBetweenCars(RoutePlanner.listCar[c1], RoutePlanner.listCar[c2])
+            else:
+                self.__mutateSingleCar(RoutePlanner.listCar[random.randint(0, len(RoutePlanner.listCar)-1)])
 
         return self.evaluateCarPlans()
     
@@ -93,10 +99,12 @@ class RoutePlanner:
         __tmpListCars = RoutePlanner.listCar
         RoutePlanner.listCar.clear()
         RoutePlanner.listCar.append(car)
+        self.bSingleCarJob = True
 
         self.doJob()
 
         RoutePlanner.listCar = __tmpListCars
+        self.bSingleCarJob = False
 
     def doJob(self):
         self.kickStart()
@@ -113,7 +121,7 @@ class RoutePlanner:
 
             if (not self.__hillClimb()):
                 __stopCount += 1
-                if (__stopCount % 100 == 0):
+                if (__stopCount % 100 == 0 and not self.bSingleCarJob):
                     self.__distributeCities() # redistribute cities, jump out local optima
 
         return __stopCount

@@ -41,6 +41,7 @@ class Car:
 
     def insertPlanWithReload(self):
         self.__reloadPlan.clear() #reset current reload plan
+        self.loads = self.capacity
         
         for depot in Depository.listDepot:
             if( depot.id == self.base ):
@@ -48,10 +49,11 @@ class Car:
 
         for city in self.routePlan:
             lastCity = city
-            if(city.demand >= self.loads):
+            if(city.demand <= self.loads):
                 self.__visitCity(city)
                 self.__reloadPlan.append(lastCity)
             else:
+                print('needs reload for city', city.id)
                 depot = self.__seekDepository(lastCity)
                 self.__reloadPlan.append(depot)
                 self.__reload()
@@ -59,6 +61,7 @@ class Car:
         return self.__reloadPlan
 
     def __visitCity(self, city):
+        print('visit city', city.id)
         self.loads -= city.demand
         city.saved = True
 
@@ -79,7 +82,7 @@ class Car:
                 __shortest = length
                 __depot = depot
 
-        print("Reload at depot: %s, position: %f, %f" % depot.id, depot.x, depot.y)
+        print("Reload at depot:", depot.id, "position:", depot.x, depot.y)
         return depot
 
     def printFinalRoute(self):
