@@ -134,4 +134,22 @@ class RoutePlanner:
         for car in RoutePlanner.listCar:
             car.printFinalRoute()
 
+    def seekSuitableCar(self, city):
+        for car in self.listCar:
+            if (car.capacity > city.demand):
+                return car
+
+    def isCarSuitable(self, car, city):
+        return car.capacity > city.demand
+
+    def findBiggestCar(self):
+        cap = 0
+        bigCar = Car(0,0,0)
+        for car in self.listCar:
+            if (car.capacity > cap):
+                cap = car.capacity
+                bigCar = car
+        return bigCar
+
+
 
