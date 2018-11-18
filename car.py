@@ -53,7 +53,7 @@ class Car:
                 self.__visitCity(city)
                 self.__reloadPlan.append(lastCity)
             else:
-                print('needs reload for city', city.id)
+                print('Car', self.id, 'needs reload for city', city.id)
                 depot = self.__seekDepository(lastCity)
                 self.__reloadPlan.append(depot)
                 self.__reload()
@@ -61,7 +61,7 @@ class Car:
         return self.__reloadPlan
 
     def __visitCity(self, city):
-        print('visit city', city.id)
+        print('Car', self.id, 'visit city', city.id)
         self.loads -= city.demand
         city.saved = True
 

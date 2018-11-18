@@ -21,10 +21,20 @@ class RoutePlanner:
 
     # randomly distribute cities to all cars
     def __distributeCities(self):
-        numCars = len(RoutePlanner.listCar)
-        for city in RoutePlanner.listCity:
-            r = random.randint(0, numCars-1)
-            RoutePlanner.listCar[r].routePlan.append(city)
+        randomcity = random.sample(RoutePlanner.listCity, len(RoutePlanner.listCity))
+        idx = 0
+        for city in randomcity:
+            # first try to distribute cities equaly
+            if RoutePlanner.listCar[idx].capacity >= city.demand:
+                RoutePlanner.listCar[idx].routePlan.append(city)
+                idx += 1
+                idx %= len(RoutePlanner.listCar)
+            else:
+            # if not, give city to first able car found
+                for car in RoutePlanner.listCar:
+                    if car.capacity >= city.demand:
+                        car.routePlan.append(city)
+                        break
 
     # mutate a car's route plan by randomly swap its two cities
     def __mutateSingleCar(self, car):
@@ -34,7 +44,7 @@ class RoutePlanner:
         tmp = carPlan[a]
         carPlan[a] = carPlan[b]
         carPlan[b] = tmp
-        print('switch city', a, 'and', b)
+        print('MUTATE SINGLE CAR: switch city', a, 'and', b)
         car.setRoutePlan(carPlan)
 
     # mutate between two cars, swap one city from each
@@ -47,11 +57,16 @@ class RoutePlanner:
         b = random.randint(0, len(plan2)-1)
         city2 = plan2[b]
 
+        if( car1.capacity < city2.demand or car2.capacity < city1.demand):
+            return # cannot swap cities, return
+
         plan1[a] = city2
         plan2[b] = city1
 
         car1.setRoutePlan(plan1)
         car2.setRoutePlan(plan2)
+
+        print('MUTATE BETWEEN CAR', car1.id, 'CITY', city1.id, '&', car2.id, 'CITY', city2.id)
 
     # evaluate all cars' plans, update current total length if result is better
     # @updateAnyway: always update result when true
@@ -111,7 +126,7 @@ class RoutePlanner:
         self.printResult()
 
     def kickStart(self):
-        __stepCount = 10000
+        __stepCount = 100
         __stopCount = 0
 
         self.__distributeCities()
