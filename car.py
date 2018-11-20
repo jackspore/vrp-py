@@ -24,6 +24,7 @@ class Car:
         self.loads = int(capacity)
         self.routePlan = []
         self.__reloadPlan = []
+        self.planLength = 0.0
         Car.numCars += 1
     
     def setBase(self, newBase):
@@ -33,11 +34,11 @@ class Car:
         self.routePlan = plan
 
     def evaluatePlan(self):
-        length = 0.0
+        self.planLength = 0.0
         curPos = self.__reloadPlan[0]
         for node in self.__reloadPlan:
-            length += self.__calcDistance(curPos, node)
-        return length
+            self.planLength += self.__calcDistance(curPos, node)
+        return self.planLength
 
     def insertPlanWithReload(self):
         self.__reloadPlan.clear() #reset current reload plan
@@ -86,7 +87,10 @@ class Car:
         return depot
 
     def printFinalRoute(self):
-        print("Car id:", self.id, "final route plan:\n", self.__reloadPlan)
+        print("Car id:", self.id, "\nfinal route plan length:", self.planLength)
+        for node in self.__reloadPlan:
+            print(node.id, end=' ')
+        print('\n**********************')
 
 
     

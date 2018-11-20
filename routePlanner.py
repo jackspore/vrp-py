@@ -146,6 +146,7 @@ class RoutePlanner:
         print("Maximum car length:", RoutePlanner.maxCarLength)
         print("Minimum car length:", RoutePlanner.minCarLength)
 
+        print('Car routes:')
         for car in RoutePlanner.listCar:
             car.printFinalRoute()
 
