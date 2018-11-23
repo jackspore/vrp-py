@@ -8,8 +8,8 @@ import math
 import random
 
 class RoutePlanner:
-    totalLength = 9999999999
-    maxCarLength = 999999.9
+    totalLength = float('inf')
+    maxCarLength = float('inf')
     minCarLength = 0.0
     listCar = []
     listCity = []
@@ -72,7 +72,7 @@ class RoutePlanner:
     # @updateAnyway: always update result when true
     def evaluateCarPlans(self, updateAnyway = False):
         __totalLength = 0.0
-        __minCarLength = 9999999.9
+        __minCarLength = float('inf')
         __maxCarLength = 0.0
         
         for car in RoutePlanner.listCar:
@@ -142,6 +142,7 @@ class RoutePlanner:
         return __stopCount
 
     def printResult(self):
+        print('*********EVALUATION COMPLETE***********')
         print("Route plan total length:", RoutePlanner.totalLength)
         print("Maximum car length:", RoutePlanner.maxCarLength)
         print("Minimum car length:", RoutePlanner.minCarLength)

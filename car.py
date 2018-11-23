@@ -49,20 +49,18 @@ class Car:
                 self.__reloadPlan.append(depot)
 
         for city in self.routePlan:
-            lastCity = city
-            if(city.demand <= self.loads):
-                self.__visitCity(city)
-                self.__reloadPlan.append(lastCity)
-            else:
+            if(city.demand > self.loads):
                 print('Car', self.id, 'needs reload for city', city.id)
-                depot = self.__seekDepository(lastCity)
+                depot = self.__seekDepository(city)
                 self.__reloadPlan.append(depot)
                 self.__reload()
+            self.__visitCity(city)
+            self.__reloadPlan.append(city)
 
         return self.__reloadPlan
 
     def __visitCity(self, city):
-        print('Car', self.id, 'visit city', city.id)
+        print('Car', self.id, 'visit city', city.id, 'with goods', self.loads)
         self.loads -= city.demand
         city.saved = True
 
@@ -75,7 +73,7 @@ class Car:
         return math.sqrt(x2 + y2)
 
     def __seekDepository(self, curCity):
-        __shortest = 9999999.9
+        __shortest = float('inf')
 
         for depot in Depository.listDepot:
             length = self.__calcDistance(curCity, depot)
@@ -89,7 +87,10 @@ class Car:
     def printFinalRoute(self):
         print("Car id:", self.id, "\nfinal route plan length:", self.planLength)
         for node in self.__reloadPlan:
-            print(node.id, end=' ')
+            if(type(node) == City):
+                print(node.id, end=' ')
+            else:
+                print('(%s)' % node.id, end=' ')
         print('\n**********************')
 
 
