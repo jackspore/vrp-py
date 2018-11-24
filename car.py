@@ -3,8 +3,9 @@
 
 from nodes import City
 from nodes import Depository
+from common import *
 
-import math
+# import math
 
 # member data:
 #  id: car ID
@@ -37,7 +38,7 @@ class Car:
         self.planLength = 0.0
         curPos = self.__reloadPlan[0]
         for node in self.__reloadPlan:
-            self.planLength += self.__calcDistance(curPos, node)
+            self.planLength += calcDistance(curPos, node)
         return self.planLength
 
     def insertPlanWithReload(self):
@@ -67,16 +68,11 @@ class Car:
     def __reload(self):
         self.loads = self.capacity
 
-    def __calcDistance(self, pos1, pos2):
-        x2 = math.fabs(pos1.x - pos2.x) * math.fabs(pos1.x - pos2.x)
-        y2 = math.fabs(pos1.y - pos2.y) * math.fabs(pos1.y - pos2.y)
-        return math.sqrt(x2 + y2)
-
     def __seekDepository(self, curCity):
         __shortest = float('inf')
 
         for depot in Depository.listDepot:
-            length = self.__calcDistance(curCity, depot)
+            length = calcDistance(curCity, depot)
             if(length < __shortest):
                 __shortest = length
                 __depot = depot

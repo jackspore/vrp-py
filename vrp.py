@@ -9,7 +9,11 @@ listCars = []
 listCities = []
 listDepots = []
 
-reader.readFile("10_2_3.txt", listCars, listCities, listDepots)
+fileToRead = input('input filename to read:')
+reader.readFile(fileToRead, listCars, listCities, listDepots)
+
+for depot in listDepots:
+    depot.sortNearbyCity()
 
 planner = RoutePlanner(listCars, listCities)
 planner.doJob()
