@@ -27,6 +27,7 @@ class RoutePlanner:
             # first try to distribute cities equaly
             if RoutePlanner.listCar[idx].capacity >= city.demand:
                 RoutePlanner.listCar[idx].routePlan.append(city)
+                city.saved = True
                 idx += 1
                 idx %= len(RoutePlanner.listCar)
             else:
@@ -34,7 +35,50 @@ class RoutePlanner:
                 for car in RoutePlanner.listCar:
                     if car.capacity >= city.demand:
                         car.routePlan.append(city)
+                        city.saved = True
                         break
+
+    # distribute cities to nearby depot's car
+    def __distributeCityToNearbyDepot(self):
+        numDepot = len(Depository.listDepot)
+        numCity = len(RoutePlanner.listCity)
+        
+        for depot in Depository.listDepot:
+            depotCar = []
+            for car in RoutePlanner.listCar:
+                if (car.depot == depot.id):
+                    depotCar.append(car)
+            
+            n = int(numCity / numDepot)
+            i = 0
+            while (i<=n):
+                city = depot.listNearbyCity[i]
+                r = random.randint(0, len(depotCar))
+                if (depotCar[r].capacity >= city.demand):
+                    depotCar[r].routePlan.append(city)
+                    city.saved = True
+                else:
+                    assigned = False
+                    for car in depotCar:
+                        if (car.capacity >= city.demand):
+                            car.routePlan.append(city)
+                            city.saved = True
+                            assigned = True
+                            break
+                    if not assigned:
+                        for car in RoutePlanner.listCar:
+                            if (car.capacity >= city.demand):
+                                car.routeplan.append(city)
+                                city.saved = True
+                i += 1
+
+            for city in RoutePlanner.listCity:
+                if (not city.saved):
+                    for car in RoutePlanner.listCar:
+                        if (car.capacity >= city.demand):
+                            car.routeplan.append(city)
+                            city.saved = True
+                            break
 
     # mutate a car's route plan by randomly swap its two cities
     def __mutateSingleCar(self, car):
