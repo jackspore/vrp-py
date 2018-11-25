@@ -31,8 +31,9 @@ class Depository:
 
     def sortNearbyCity(self):
         self.listNearbyCity = City.listCity
-        for city in self.listNearbyCity:
-            city.dis = calcDistance(self, city)
-        
-        self.listNearbyCity.sort(key = lambda dist:city.dis)
-        print('1')
+        # for city in self.listNearbyCity:
+        #     city.dis = calcDistance(pos1=Pos2D(self.x, self.y), pos2=Pos2D(city.x, city.y))
+        # self.listNearbyCity = sorted(self.listNearbyCity, key = lambda city: calcDistance(Pos2D(self.x, self.y), Pos2D(city.x, city.y)))
+
+        self.listNearbyCity.sort(key = lambda city: calcDistance(Pos2D(self.x, self.y), Pos2D(city.x, city.y)))
+        print('sorted cities by distance to depot', self.id)

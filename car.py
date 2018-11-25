@@ -38,7 +38,7 @@ class Car:
         self.planLength = 0.0
         curPos = self.__reloadPlan[0]
         for node in self.__reloadPlan:
-            self.planLength += calcDistance(curPos, node)
+            self.planLength += calcDistance(pos1=Pos2D(curPos.x, curPos.y), pos2=Pos2D(node.x, node.y))
         return self.planLength
 
     def insertPlanWithReload(self):
@@ -72,7 +72,7 @@ class Car:
         __shortest = float('inf')
 
         for depot in Depository.listDepot:
-            length = calcDistance(curCity, depot)
+            length = calcDistance(pos1=Pos2D(curCity.x, curCity.y), pos2=Pos2D(depot.x, depot.y))
             if(length < __shortest):
                 __shortest = length
                 __depot = depot
